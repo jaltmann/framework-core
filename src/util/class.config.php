@@ -8,7 +8,7 @@
       $fn = sprintf('%s/%s/%s.json', PATHCONFIGS, LOCALENV, $name);
       if (!file_exists($fn))
       {
-        die('Configuration file does not exists ');
+        die('Configuration file does not exists '.$fn);
       }
 
       $json = \util\Json::readJson($fn);

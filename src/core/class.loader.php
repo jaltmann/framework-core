@@ -45,11 +45,11 @@
 
     public function autoload_classes($class_name)
     {
-      $isLoaded = $this->autoload('Class', PATHFRAMEWORK, $class_name);
+      $isLoaded = $this->autoload('', PATHFRAMEWORK, $class_name, 'class');
 
       if (!$isLoaded && defined('PATHCLASSESPROJECT'))
       {
-        $isLoaded = $this->autoload('Class', PATHCLASSESPROJECT, $class_name);
+        $isLoaded = $this->autoload('', PATHCLASSESPROJECT, $class_name, 'class');
       }
 
       return $isLoaded;
@@ -57,21 +57,25 @@
 
     public function autoload_objects($class_name)
     {
+      if (!defined('PATHOBJECTS')) return true;
       return $this->autoload('Object', PATHOBJECTS, $class_name);
     }
 
     public function autoload_views($class_name)
     {
+      if (!defined('PATHOBJECTS')) return true;
       return $this->autoload('View', PATHOBJECTS, $class_name);
     }
 
     public function autoload_controller($class_name)
     {
+      if (!defined('PATHCONTROLLER')) return true;
       return $this->autoload('Controller', PATHCONTROLLER, $class_name);
     }
 
     public function autoload_api_handler($class_name)
     {
+      if (!defined('PATHHANDLER')) return true;
       return $this->autoload('ApiHandler', PATHHANDLER, $class_name, 'handler.api');
     }
 

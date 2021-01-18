@@ -1,0 +1,15 @@
+{
+  "default":
+  {
+    "name": "default",
+    "engine": "MySQLi",
+    "prefix": "test",
+    "arguments":
+    {
+      "host": "localhost",
+      "username": "user",
+      "password": "user",
+      "db": "app"
+    }
+  }
+}
