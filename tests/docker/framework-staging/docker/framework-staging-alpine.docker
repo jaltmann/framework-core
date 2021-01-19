@@ -1,0 +1,72 @@
+FROM alpine:latest
+MAINTAINER Jens Altmann 
+
+#setting label for project
+LABEL project="jaltmann"
+#setting label for environment (repository,monitoring,app,internal,devel,test)
+LABEL environment="staging"
+#setting label of tool group (container,apps,custom,user)
+LABEL group="framework"
+#setting label für name of container
+LABEL name="framework-staging"
+
+
+# Installing packages
+
+#dpkg -s mariadb-server
+
+# Setting mysql username and password
+RUN echo 'mariadb-server-10.1 mariadb-server/root_password password root' | debconf-set-selections && \
+    echo 'mariadb-server-10.1 mariadb-server/root_password_again password root' | debconf-set-selections
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apk update \
+ && apk add -y \
+    mariadb-client \
+    mariadb-server \
+    php7 \
+    php7-curl \
+    php7-json \
+    php7-mbstring \
+    php7-mysqli \
+    php7-sqlite3 \
+    php7-xml \
+    php7-zip \
+    php7-pear \
+    supervisor \
+    xterm 
+
+
+#not my favourite, better using
+#mysql_secure_installation see @http://stackoverflow.com/questions/24270733/automate-mysql-secure-installation-with-echo-command-via-a-shell-script
+RUN /etc/init.d/mariadb start && \
+    sleep 3 && \
+    mysql -e "DELETE FROM mysql.user WHERE User='';" && \
+    mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1');" && \
+    mysql -e "DROP DATABASE IF EXISTS test;" && \
+    mysql -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';" && \
+    mysql -e "CREATE USER 'user'@'localhost' IDENTIFIED BY 'user';" && \
+    mysql -e "CREATE DATABASE app;" && \
+    mysql -e "GRANT ALL PRIVILEGES ON app.* TO 'user'@'localhost' WITH GRANT OPTION;" && \
+    mysql -e "FLUSH PRIVILEGES;" && \
+    /etc/init.d/mariadb stop
+
+ENV TERM="xterm"
+
+RUN mkdir -p /opt/app && \
+    mkdir -p /opt/scripts && \
+    mkdir -p /var/log/framework/supervisor && \
+    mkdir -p /var/log/framework/mysql && \
+    mkdir -p /var/log/framework/supervisor_children
+
+COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY startup.sh /opt/scripts/startup.sh
+
+RUN chmod 641 /opt/scripts/startup.sh
+
+WORKDIR /opt/app

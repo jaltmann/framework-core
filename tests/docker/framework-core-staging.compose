@@ -3,3 +3,5 @@ framework-core-staging:
   image: "framework-staging:latest"
   container_name: framework-core-staging
   command: bash -c "/opt/scripts/startup.sh"
+  volumes:
+    - ./../../:/opt/app

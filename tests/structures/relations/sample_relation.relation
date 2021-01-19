@@ -30,7 +30,7 @@
       "flags":
       {
         "active": {"idx": 0, "description": "User is active"},
-        "verified": {"idx": 1, "description": "User is verified"},
+        "verified": {"idx": 1, "description": "User is verified"}
       }
     }
   },
@@ -47,4 +47,3 @@
     }
   }
 }
-

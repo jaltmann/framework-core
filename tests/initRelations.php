@@ -1,6 +1,5 @@
 <?php
 include_once(dirname(__FILE__).'/_bootstrap.php');
-//\handler\RequestHandler::getInstance();
 
 $debug = true;
 $purge = true;
